@@ -207,3 +207,30 @@ func MulField(c, a, b []uint64) {
 	c[5] += accum0.lo
 	c[1] += accum1.lo
 }
+
+// MulFieldUnsigned multiplies a and b into c
+// Function: gf_mulw_unsigned
+func MulFieldUnsigned(c, a []uint64, b uint32) {
+	mask := uint64((1 << 56) - 1)
+
+	var accum0, accum4 uint128
+
+	for i := 0; i < 4; i++ {
+		accum0 = widesum(accum0, widemul(uint64(b), a[i]))
+		accum4 = widesum(accum4, widemul(uint64(b), a[i+4]))
+
+		c[i] = accum0.lo & mask
+		accum0 = wideshiftright(accum0, 56)
+
+		c[i+4] = accum4.lo & mask
+		accum4 = wideshiftright(accum4, 56)
+	}
+
+	accum0 = widesum(accum0, widesum(accum4, uint128{hi: 0x00, lo: c[4]}))
+	c[4] = accum0.lo & mask
+	c[5] += accum0.lo >> 56
+
+	accum4 = widesum(accum4, uint128{hi: 0x00, lo: c[0]})
+	c[0] = accum4.lo & mask
+	c[1] += accum4.lo >> 56
+}

@@ -77,6 +77,51 @@ func Test_MulField(t *testing.T) {
 	}
 }
 
+func Test_MulFieldUnsigned(t *testing.T) {
+	out := make([]uint64, NLimbs)
+	a := []uint64{0x993a1dc07dc468, 0xb30cb17de4df36,
+		0xc383cc018dd112, 0x16a4de8f81ceab,
+		0x4dcff3b827e40, 0x7ce47f119bb569,
+		0xd7ad6a3cc71dca, 0x4971fec10a566}
+	b := uint32(0x13154)
+	exp := []uint64{0x84841900445f99, 0xdfa13afd094a78,
+		0x2d4cca789fe174, 0xdb4200bdd2744c,
+		0xe499a5ff3bcd7a, 0x365dac4a39a540,
+		0x6079452bd4053d, 0x8e9eb94a85ccb4}
+	MulFieldUnsigned(out, a, b)
+	if out[0] != exp[0] ||
+		out[1] != exp[1] ||
+		out[2] != exp[2] ||
+		out[3] != exp[3] ||
+		out[4] != exp[4] ||
+		out[5] != exp[5] ||
+		out[6] != exp[6] ||
+		out[7] != exp[7] {
+		t.Errorf("MulFieldUnsigned(1) was incorrect, got %#v", out)
+	}
+
+	a = []uint64{0xe908e8219da07c, 0x932e20bca1bb24,
+		0x5fc4c0d1a8cfc0, 0x822dd3800306c7,
+		0x4d1da688efac17, 0x74f5826e83eafa,
+		0xede9810ca42ae7, 0x3353ab6d645941}
+	b = uint32(0x13154)
+	exp = []uint64{0x137c37d3eca1e7, 0x40237a950861c0,
+		0xd6490eeae89a8a, 0x5004e99c11c284,
+		0xa123ca7aacb706, 0xe0f4776e3d5001,
+		0x435e67bcfbd64a, 0x86b1947344d615}
+	MulFieldUnsigned(out, a, b)
+	if out[0] != exp[0] ||
+		out[1] != exp[1] ||
+		out[2] != exp[2] ||
+		out[3] != exp[3] ||
+		out[4] != exp[4] ||
+		out[5] != exp[5] ||
+		out[6] != exp[6] ||
+		out[7] != exp[7] {
+		t.Errorf("MulFieldUnsigned(2) was incorrect, got %#v", out)
+	}
+}
+
 func Test_widesub(t *testing.T) {
 	one := uint128{0x00, 0x01}
 	zero := uint128{0x00, 0x00}
