@@ -21,31 +21,13 @@ func widemul(a, b uint64) uint128 {
 func widesum(a, b uint128) uint128 {
 	lo, c := bits.Add64(a.lo, b.lo, 0)
 	hi, c := bits.Add64(a.hi, b.hi, c)
-	if c != 0 {
-		panic("goldilocks/field/field64/sum: unexpected overflow")
-	}
 	return uint128{hi, lo}
 }
 
 // widesub will subtract b from a
 func widesub(a, b uint128) uint128 {
-	// is_wrap_1 := b.hi > a.hi
-	// is_wrap_2 := (a.hi == b.hi) & (b.lo > a.lo)
-	// is_wrap := is_wrap_1 | is_Wrap_2
-	// how to turn this into a mask?
-
 	lo, c := bits.Sub64(a.lo, b.lo, 0)
 	hi, c := bits.Sub64(a.hi, b.hi, c)
-
-	// TODO: wraparound
-	// - always calculate the possibility of wraparound
-	// - use a constant time swap for hi and lo values if
-	// - the wraparound actually happens
-
-	if c != 0 {
-		panic("goldilocks/field/field64/sub: unexpected underflow")
-	}
-
 	return uint128{hi, lo}
 }
 
@@ -297,7 +279,7 @@ func Square(c, a []uint64) {
 	accum0 = wideshiftright(accum0, 56)
 	accum1 = wideshiftright(accum1, 56)
 
-	accum2 = widesum(accum2, widemul(2*aa[2], aa[3]))
+	accum2 = widemul(2*aa[2], aa[3])
 	accum0 = widesub(accum0, widemul(2*a[2], a[3]))
 	accum1 = widesum(accum1, widemul(2*a[6], a[7]))
 
@@ -352,5 +334,4 @@ func Square(c, a []uint64) {
 
 	c[4] += accum0.lo + accum1.lo
 	c[0] += accum1.lo
-
 }

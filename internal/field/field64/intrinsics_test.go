@@ -133,27 +133,45 @@ func limbEq(a, b []uint64) bool {
 		a[7] == b[7]
 }
 
-// func Test_Square(t *testing.T) {
-// 	out := make([]uint64, NLimbs)
-// 	out2 := make([]uint64, NLimbs)
-// 	a := []uint64{0x85222f93790836, 0x3c988366cff42b,
-// 		0xcd54e688f90ea4, 0xcbb5c2f153147b,
-// 		0x4878cc0448beff, 0x598976a599e589,
-// 		0xb68b1de2c8aaa3, 0x2fe2e3722d6d5e}
-// 	exp := []uint64{0x453f90677f6ac2, 0x4435fce2425b2b,
-// 		0x59a92c8ccae3fb, 0xf59bc85fb950ac,
-// 		0x37343e032e48db, 0x337481e66f0a6e,
-// 		0x890dc78d47073f, 0x4795ac2b49dbfa}
-// 	Square(out, a)
-// 	if !limbEq(out, exp) {
-// 		t.Errorf("Square(0) was incorrect, got %#v", out)
-// 	}
+func Test_Square(t *testing.T) {
+	out := make([]uint64, NLimbs)
+	out2 := make([]uint64, NLimbs)
+	out3 := make([]uint64, NLimbs)
+	out4 := make([]uint64, NLimbs)
+	a := []uint64{0x85222f93790836, 0x3c988366cff42b,
+		0xcd54e688f90ea4, 0xcbb5c2f153147b,
+		0x4878cc0448beff, 0x598976a599e589,
+		0xb68b1de2c8aaa3, 0x2fe2e3722d6d5e}
+	exp := []uint64{0x453f90677f6ac2, 0x4435fce2425b2b,
+		0x59a92c8ccae3fb, 0xf59bc85fb950ac,
+		0x37343e032e48db, 0x337481e66f0a6e,
+		0x890dc78d47073f, 0x4795ac2b49dbfa}
+	Square(out, a)
+	if !limbEq(out, exp) {
+		t.Errorf("Square(0) was incorrect, got %#v", out)
+	}
 
-// 	MulField(out2, a, a)
-// 	if !limbEq(out, out2) {
-// 		t.Errorf("Mul(0) and Square(0) should be equal...")
-// 	}
-// }
+	MulField(out2, a, a)
+	if !limbEq(out, out2) {
+		t.Errorf("Mul(0) and Square(0) should be equal...")
+	}
+
+	for i := 0; i < 30; i += 2 {
+		Square(out3, out)
+		MulField(out4, out2, out2)
+
+		if !limbEq(out3, out4) {
+			t.Errorf("Mul(%d) and Square(%d) should be equal...", i+1, i+1)
+		}
+
+		Square(out, out3)
+		MulField(out2, out4, out4)
+
+		if !limbEq(out, out2) {
+			t.Errorf("Mul(%d) and Square(%d) should be equal...", i+2, i+2)
+		}
+	}
+}
 
 func Test_widesub(t *testing.T) {
 	one := uint128{0x00, 0x01}
