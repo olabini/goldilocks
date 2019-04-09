@@ -35,14 +35,18 @@ func WideMul(a, b Word) (hi, low Word) {
 	return Word(hix), Word(lox)
 }
 
-// LeftShiftExtend bla bla bla
+// LeftShiftExtend creates a mask from the word. If the argument is 1, the mask will
+// be all ones, if the argument is 0, it will be all 0.
+// This function is constant time, and doesn't reveal the bit inside of the argument
 func LeftShiftExtend(a Word) Word {
-	ext := a & 0x1
-	result := Word(0)
+	result := a & 0x1
 
-	for i := 0; i < 64; i++ {
-		result = (result << 1) | ext
-	}
+	result = (result << 1) | result
+	result = (result << 2) | result
+	result = (result << 4) | result
+	result = (result << 8) | result
+	result = (result << 16) | result
+	result = (result << 32) | result
 
 	return result
 }

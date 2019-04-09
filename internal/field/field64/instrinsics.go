@@ -28,11 +28,19 @@ func widesum(a, b uint128) uint128 {
 }
 
 // widesub will subtract b from a
-// the result can not be negative - a has to be
-// greater than or equal to b
 func widesub(a, b uint128) uint128 {
+	// is_wrap_1 := b.hi > a.hi
+	// is_wrap_2 := (a.hi == b.hi) & (b.lo > a.lo)
+	// is_wrap := is_wrap_1 | is_Wrap_2
+	// how to turn this into a mask?
+
 	lo, c := bits.Sub64(a.lo, b.lo, 0)
 	hi, c := bits.Sub64(a.hi, b.hi, c)
+
+	// TODO: wraparound
+	// - always calculate the possibility of wraparound
+	// - use a constant time swap for hi and lo values if
+	// - the wraparound actually happens
 
 	if c != 0 {
 		panic("goldilocks/field/field64/sub: unexpected underflow")
@@ -233,4 +241,116 @@ func MulFieldUnsigned(c, a []uint64, b uint32) {
 	accum4 = widesum(accum4, uint128{hi: 0x00, lo: c[0]})
 	c[0] = accum4.lo & mask
 	c[1] += accum4.lo >> 56
+}
+
+// Square will square the limb a and put it in c
+// Function: gf_sqr
+func Square(c, a []uint64) {
+	mask := uint64((1 << 56) - 1)
+
+	mm, _ := memguard.NewMutable(WordSize * 1 * 4)
+	defer mm.Destroy()
+	mmb, _ := mm.Uint64()
+	aa := mmb[0:4]
+
+	for i := 0; i < 4; i++ {
+		aa[i] = a[i] + a[i+4]
+	}
+
+	accum2 := widemul(a[0], a[3])
+	accum0 := widemul(aa[0], aa[3])
+	accum1 := widemul(a[4], a[7])
+
+	accum2 = widesum(accum2, widemul(a[1], a[2]))
+	accum0 = widesum(accum0, widemul(aa[1], aa[2]))
+	accum1 = widesum(accum1, widemul(a[5], a[6]))
+
+	accum0 = widesub(accum0, accum2)
+	accum1 = widesum(accum1, accum2)
+
+	c[3] = (accum1.lo << 1) & mask
+	c[7] = (accum0.lo << 1) & mask
+
+	accum0 = wideshiftright(accum0, 55)
+	accum1 = wideshiftright(accum1, 55)
+
+	accum0 = widesum(accum0, widemul(2*aa[1], aa[3]))
+	accum1 = widesum(accum1, widemul(2*a[5], a[7]))
+	accum0 = widesum(accum0, widemul(aa[2], aa[2]))
+	accum1 = widesum(accum1, accum0)
+
+	accum0 = widesub(accum0, widemul(2*a[1], a[3]))
+	accum1 = widesum(accum1, widemul(a[6], a[6]))
+
+	accum2 = widemul(a[0], a[0])
+
+	accum1 = widesub(accum1, accum2)
+	accum0 = widesum(accum0, accum2)
+
+	accum0 = widesub(accum0, widemul(a[2], a[2]))
+	accum1 = widesum(accum1, widemul(aa[0], aa[0]))
+	accum0 = widesum(accum0, widemul(a[4], a[4]))
+
+	c[0] = accum0.lo & mask
+	c[4] = accum1.lo & mask
+
+	accum0 = wideshiftright(accum0, 56)
+	accum1 = wideshiftright(accum1, 56)
+
+	accum2 = widesum(accum2, widemul(2*aa[2], aa[3]))
+	accum0 = widesub(accum0, widemul(2*a[2], a[3]))
+	accum1 = widesum(accum1, widemul(2*a[6], a[7]))
+
+	accum1 = widesum(accum1, accum2)
+	accum0 = widesum(accum0, accum2)
+
+	accum2 = widemul(2*a[0], a[1])
+	accum1 = widesum(accum1, widemul(2*aa[0], aa[1]))
+	accum0 = widesum(accum0, widemul(2*a[4], a[5]))
+
+	accum1 = widesub(accum1, accum2)
+	accum0 = widesum(accum0, accum2)
+
+	c[1] = accum0.lo & mask
+	c[5] = accum1.lo & mask
+
+	accum0 = wideshiftright(accum0, 56)
+	accum1 = wideshiftright(accum1, 56)
+
+	accum2 = widemul(aa[3], aa[3])
+	accum0 = widesub(accum0, widemul(a[3], a[3]))
+	accum1 = widesum(accum1, widemul(a[7], a[7]))
+
+	accum1 = widesum(accum1, accum2)
+	accum0 = widesum(accum0, accum2)
+
+	accum2 = widemul(2*a[0], a[2])
+	accum1 = widesum(accum1, widemul(2*aa[0], aa[2]))
+	accum0 = widesum(accum0, widemul(2*a[4], a[6]))
+
+	accum2 = widesum(accum2, widemul(a[1], a[1]))
+	accum1 = widesum(accum1, widemul(aa[1], aa[1]))
+	accum0 = widesum(accum0, widemul(a[5], a[5]))
+
+	accum1 = widesub(accum1, accum2)
+	accum0 = widesum(accum0, accum2)
+
+	c[2] = accum0.lo & mask
+	c[6] = accum1.lo & mask
+
+	accum0 = wideshiftright(accum0, 56)
+	accum1 = wideshiftright(accum1, 56)
+
+	accum0 = widesum(accum0, uint128{hi: 0x00, lo: c[3]})
+	accum1 = widesum(accum1, uint128{hi: 0x00, lo: c[7]})
+
+	c[3] = accum0.lo & mask
+	c[7] = accum1.lo & mask
+
+	accum0 = wideshiftright(accum0, 56)
+	accum1 = wideshiftright(accum1, 56)
+
+	c[4] += accum0.lo + accum1.lo
+	c[0] += accum1.lo
+
 }

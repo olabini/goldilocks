@@ -122,6 +122,39 @@ func Test_MulFieldUnsigned(t *testing.T) {
 	}
 }
 
+func limbEq(a, b []uint64) bool {
+	return a[0] == b[0] &&
+		a[1] == b[1] &&
+		a[2] == b[2] &&
+		a[3] == b[3] &&
+		a[4] == b[4] &&
+		a[5] == b[5] &&
+		a[6] == b[6] &&
+		a[7] == b[7]
+}
+
+// func Test_Square(t *testing.T) {
+// 	out := make([]uint64, NLimbs)
+// 	out2 := make([]uint64, NLimbs)
+// 	a := []uint64{0x85222f93790836, 0x3c988366cff42b,
+// 		0xcd54e688f90ea4, 0xcbb5c2f153147b,
+// 		0x4878cc0448beff, 0x598976a599e589,
+// 		0xb68b1de2c8aaa3, 0x2fe2e3722d6d5e}
+// 	exp := []uint64{0x453f90677f6ac2, 0x4435fce2425b2b,
+// 		0x59a92c8ccae3fb, 0xf59bc85fb950ac,
+// 		0x37343e032e48db, 0x337481e66f0a6e,
+// 		0x890dc78d47073f, 0x4795ac2b49dbfa}
+// 	Square(out, a)
+// 	if !limbEq(out, exp) {
+// 		t.Errorf("Square(0) was incorrect, got %#v", out)
+// 	}
+
+// 	MulField(out2, a, a)
+// 	if !limbEq(out, out2) {
+// 		t.Errorf("Mul(0) and Square(0) should be equal...")
+// 	}
+// }
+
 func Test_widesub(t *testing.T) {
 	one := uint128{0x00, 0x01}
 	zero := uint128{0x00, 0x00}
@@ -153,6 +186,8 @@ func Test_widesub(t *testing.T) {
 	if res != (uint128{0xfffffffffdc679, 0x00ff123cccdeeed0}) {
 		t.Errorf("widesub(0xFFFFFFFFFDD12300FF124323245324, 0xAAA0000000656456454) was incorrect, got %#v", res)
 	}
+
+	//TODO: wraparound...
 }
 
 func Test_wideshiftleft(t *testing.T) {
