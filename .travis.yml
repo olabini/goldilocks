@@ -1,7 +1,6 @@
 language: go
 
 go:
-  - tip
   - "1.12.3"
 
 script:
@@ -10,6 +9,4 @@ script:
   - ./run_tests.sh
 
 matrix:
-  allow_failures:
-    - go: tip
   fast_finish: true
