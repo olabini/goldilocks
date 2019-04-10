@@ -1,5 +1,7 @@
 package field64
 
+// SubtractRaw will unsafely subtract a from b, putting
+// the result in out. It's safe for out to overlap with a and b
 // Function: gf_sub_RAW
 func SubtractRaw(out, a, b []uint64) {
 	co1 := uint64((1<<56)-1) * 2
@@ -15,6 +17,8 @@ func SubtractRaw(out, a, b []uint64) {
 	WeakReduce(out)
 }
 
+// AddRaw will unsafely add a to b, putting
+// the result in out. It's safe for out to overlap with a and b
 // Function: gf_add_RAW
 func AddRaw(out, a, b []uint64) {
 	out[0] = a[0] + b[0]

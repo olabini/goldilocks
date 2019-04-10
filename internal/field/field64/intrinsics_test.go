@@ -186,8 +186,8 @@ func Test_widesub(t *testing.T) {
 		t.Errorf("widesub(0x01, 0x00) was incorrect, got %#v", res)
 	}
 
-	high_one := uint128{0x01, 0x01}
-	res = widesub(high_one, one)
+	highOne := uint128{0x01, 0x01}
+	res = widesub(highOne, one)
 	if res != (uint128{0x01, 0x00}) {
 		t.Errorf("widesub(0x010000000000000001, 0x01) was incorrect, got %#v", res)
 	}
@@ -199,8 +199,8 @@ func Test_widesub(t *testing.T) {
 	}
 
 	large := uint128{0xFFFFFFFFFDD123, 0x00FF124323245324}
-	other_large := uint128{0xAAA, 0x0000000656456454}
-	res = widesub(large, other_large)
+	otherLarge := uint128{0xAAA, 0x0000000656456454}
+	res = widesub(large, otherLarge)
 	if res != (uint128{0xfffffffffdc679, 0x00ff123cccdeeed0}) {
 		t.Errorf("widesub(0xFFFFFFFFFDD12300FF124323245324, 0xAAA0000000656456454) was incorrect, got %#v", res)
 	}

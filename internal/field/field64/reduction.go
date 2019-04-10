@@ -1,5 +1,7 @@
 package field64
 
+// WeakReduce will reduce the field represented by a
+// Function: gf_weak_reduce
 func WeakReduce(a []uint64) {
 	mask := uint64((1 << 56) - 1)
 	tmp := a[7] >> 56

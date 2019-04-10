@@ -31,19 +31,19 @@ func Test_WordIsZero(t *testing.T) {
 	}
 }
 
-func Test_WideMul(t *testing.T) {
-	hi, low := WideMul(0x00, 0x00)
-	if hi != Word(0x00) || low != Word(0x00) {
-		t.Errorf("WideMul(0x00, 0x00) was incorrect, got 0x%x, 0x%x", hi, low)
-	}
+// func Test_WideMul(t *testing.T) {
+// 	hi, low := WideMul(0x00, 0x00)
+// 	if hi != Word(0x00) || low != Word(0x00) {
+// 		t.Errorf("WideMul(0x00, 0x00) was incorrect, got 0x%x, 0x%x", hi, low)
+// 	}
 
-	hi, low = WideMul(0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF)
-	if hi != Word(0xfffffffffffffffe) || low != Word(0x0000000000000001) {
-		t.Errorf("WideMul(0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF) was incorrect, got 0x%x, 0x%x", hi, low)
-	}
+// 	hi, low = WideMul(0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF)
+// 	if hi != Word(0xfffffffffffffffe) || low != Word(0x0000000000000001) {
+// 		t.Errorf("WideMul(0xFFFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF) was incorrect, got 0x%x, 0x%x", hi, low)
+// 	}
 
-	hi, low = WideMul(0x42, 0xFFFFFFFF1FFFFFFF)
-	if hi != Word(0x41) || low != Word(0xffffffc63fffffbe) {
-		t.Errorf("WideMul(0x42, 0xFFFFFFFF1FFFFFFF) was incorrect, got 0x%x, 0x%x", hi, low)
-	}
-}
+// 	hi, low = WideMul(0x42, 0xFFFFFFFF1FFFFFFF)
+// 	if hi != Word(0x41) || low != Word(0xffffffc63fffffbe) {
+// 		t.Errorf("WideMul(0x42, 0xFFFFFFFF1FFFFFFF) was incorrect, got 0x%x, 0x%x", hi, low)
+// 	}
+// }

@@ -14,6 +14,8 @@ func (e *Element) limbs() ([]uint64, error) {
 	return e.Limb.Uint64()
 }
 
+// limbsUnsafe assumes the limbs are set up correctly
+// and will panic if that's not correct
 func (e *Element) limbsUnsafe() []uint64 {
 	res, er := e.Limb.Uint64()
 	if er != nil {
@@ -29,6 +31,8 @@ func (e *Element) String() string {
 		data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7])
 }
 
+// Square will square the element in a, and put the result in c.
+// The two elements can overlap
 func Square(c, a *Element) {
 	c.Limb.MakeMutable()
 	defer c.Limb.MakeImmutable()
@@ -39,6 +43,9 @@ func Square(c, a *Element) {
 	field64.Square(climbs, alimbs)
 }
 
+// CreateElementFrom takes NLimbs uint64 entries and creates
+// an element from them. It panics if given the wrong amount of
+// data
 func CreateElementFrom(data []uint64) *Element {
 	if len(data) != NLimbs {
 		panic(fmt.Sprintf("CreateElementFrom called with %d limbs", len(data)))
@@ -54,10 +61,14 @@ func CreateElementFrom(data []uint64) *Element {
 	return elm
 }
 
+// EmptyElement returns a newly created empty element
 func EmptyElement() *Element {
 	return CreateFieldElement()
 }
 
+// SubtractNonResidue subtracts a from b, placing the result in c.
+// c can overlap with a and b.
+// This function will not reduce after the operation
 // Function: gf_sub_nr
 func SubtractNonResidue(c, a, b *Element) {
 	c.Limb.MakeMutable()
@@ -67,6 +78,9 @@ func SubtractNonResidue(c, a, b *Element) {
 	bias(c, 2)
 }
 
+// AddNonResidue will add a and b and put the result in c.
+// c can overlap with a and b
+// This function will not reduce at the end.
 // Function: gf_add_nr
 func AddNonResidue(c, a, b *Element) {
 	c.Limb.MakeMutable()
@@ -75,6 +89,9 @@ func AddNonResidue(c, a, b *Element) {
 	addRaw(c, a, b)
 }
 
+// Subtract will subtract a from b, putting the result in d.
+// It is safe for d to overlap with a and b.
+// This function reduces at the end
 // Function: gf_sub
 func Subtract(d, a, b *Element) {
 	d.Limb.MakeMutable()
@@ -110,6 +127,8 @@ func weakReduce(a *Element) {
 	field64.WeakReduce(a.limbsUnsafe())
 }
 
+// Mul will multiply the as and bs elements, putting the result in
+// cs. It's safe for cs to overlap with bs and as.
 // Function: gf_mul
 func Mul(cs, as, bs *Element) {
 	cs.Limb.MakeMutable()
