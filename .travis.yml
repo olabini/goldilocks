@@ -5,6 +5,7 @@ go:
   - "1.12.3"
 
 script:
+  - ulimit -a
   - make deps
   - make check
 
