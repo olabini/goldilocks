@@ -32,3 +32,7 @@
 [[constraint]]
   name = "github.com/awnumar/memguard"
   version = "0.15.0"
+
+[[constraint]]
+  branch = "v1"
+  name = "gopkg.in/check.v1"

@@ -98,3 +98,12 @@ func SquareN(y, x *Element, n int) {
 //     #error "Only supporting p=7 mod 8"
 // #endif
 // }
+
+// static inline void gf_mulw(gf c, const gf a, int32_t w) {
+//     if (w>0) {
+//         gf_mulw_unsigned(c, a, w);
+//     } else {
+//         gf_mulw_unsigned(c, a, -w);
+//         gf_sub(c,ZERO,c);
+//     }
+// }

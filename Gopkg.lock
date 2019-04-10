@@ -11,6 +11,18 @@
   version = "v0.15.0"
 
 [[projects]]
+  name = "github.com/kr/pretty"
+  packages = ["."]
+  revision = "73f6ac0b30a98e433b289500d779f50c1a6f0712"
+  version = "v0.1.0"
+
+[[projects]]
+  name = "github.com/kr/text"
+  packages = ["."]
+  revision = "e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f"
+  version = "v0.1.0"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = [
@@ -19,9 +31,15 @@
   ]
   revision = "4b34438f7a67ee5f45cc6132e2bad873a20324e9"
 
+[[projects]]
+  branch = "v1"
+  name = "gopkg.in/check.v1"
+  packages = ["."]
+  revision = "788fd78401277ebd861206a03c884797c6ec5541"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "338525091266f792a54ec0b1010411349a16d02a1e8872802995cd4a5350beea"
+  inputs-digest = "86c12002a8e9e4f2e7f0acc67468142ab5d7a8fff8f39eac3820d53b6b1ad8bd"
   solver-name = "gps-cdcl"
   solver-version = 1

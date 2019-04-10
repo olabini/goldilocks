@@ -204,8 +204,6 @@ func Test_widesub(t *testing.T) {
 	if res != (uint128{0xfffffffffdc679, 0x00ff123cccdeeed0}) {
 		t.Errorf("widesub(0xFFFFFFFFFDD12300FF124323245324, 0xAAA0000000656456454) was incorrect, got %#v", res)
 	}
-
-	//TODO: wraparound...
 }
 
 func Test_wideshiftleft(t *testing.T) {
