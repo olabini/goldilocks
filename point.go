@@ -20,6 +20,13 @@ type point struct {
 	x, y, z, t *field.Element /* Twisted extended homogeneous coordinates */
 }
 
+func (p *point) destroy() {
+	p.x.Destroy()
+	p.y.Destroy()
+	p.z.Destroy()
+	p.t.Destroy()
+}
+
 func newPoint() *point {
 	return &point{
 		x: field.EmptyElement(),

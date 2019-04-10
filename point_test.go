@@ -91,8 +91,12 @@ func (s *pointSuite) Test_pointAdd(c *C) {
 	q := createPointFrom(testPointData1)
 	r := createPointFrom(testPointData2)
 	p := createPointFrom(testPointData3)
+	defer q.destroy()
+	defer r.destroy()
+	defer p.destroy()
 
 	res := newPoint()
+	defer res.destroy()
 
 	pointAdd(res, q, r)
 
