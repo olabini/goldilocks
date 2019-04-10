@@ -5,11 +5,8 @@ go:
   - "1.12.3"
 
 script:
-  - ulimit -a
-  - sudo ulimit -l 16384
-  - ulimit -a
   - make deps
-  - make check
+  - make lint vet
 
 matrix:
   allow_failures:
