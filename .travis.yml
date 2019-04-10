@@ -6,7 +6,7 @@ go:
 
 script:
   - ulimit -a
-  - ulimit -l 16384
+  - sudo ulimit -l 16384
   - ulimit -a
   - make deps
   - make check
