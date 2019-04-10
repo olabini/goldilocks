@@ -21,3 +21,9 @@ test:
 deps:
 	go get -u github.com/kardianos/govendor
 	go get -u golang.org/x/lint/golint
+
+test-cover:
+	go test -coverprofile=goldilocks.coverprofile -cover -v . $$($(GOLIST))
+
+cover: test-cover
+	go tool cover -html=goldilocks.coverprofile
