@@ -41,3 +41,49 @@ func SquareN(y, x *Element, n int) {
 		Square(y, tmp)
 	}
 }
+
+// EmptyElement returns a newly created empty element
+func EmptyElement() *Element {
+	return CreateFieldElement()
+}
+
+// SubtractNonResidue subtracts a from b, placing the result in c.
+// c can overlap with a and b.
+// This function will not reduce after the operation
+// Function: gf_sub_nr
+func SubtractNonResidue(c, a, b *Element) {
+	c.Limb.MakeMutable()
+	defer c.Limb.MakeImmutable()
+
+	subtractRaw(c, a, b)
+	bias(c, 2)
+}
+
+// AddNonResidue will add a and b and put the result in c.
+// c can overlap with a and b
+// This function will not reduce at the end.
+// Function: gf_add_nr
+func AddNonResidue(c, a, b *Element) {
+	c.Limb.MakeMutable()
+	defer c.Limb.MakeImmutable()
+
+	addRaw(c, a, b)
+}
+
+// Subtract will subtract a from b, putting the result in d.
+// It is safe for d to overlap with a and b.
+// This function reduces at the end
+// Function: gf_sub
+func Subtract(d, a, b *Element) {
+	d.Limb.MakeMutable()
+	defer d.Limb.MakeImmutable()
+
+	subtract(d, a, b)
+}
+
+// Function: gf_sub
+func subtract(d, a, b *Element) {
+	subtractRaw(d, a, b)
+	bias(d, 2)
+	weakReduce(d)
+}

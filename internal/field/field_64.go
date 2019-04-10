@@ -17,7 +17,7 @@ func (e *Element) limbs() ([]uint64, error) {
 // limbsUnsafe assumes the limbs are set up correctly
 // and will panic if that's not correct
 func (e *Element) limbsUnsafe() []uint64 {
-	res, er := e.Limb.Uint64()
+	res, er := e.limbs()
 	if er != nil {
 		panic(er.Error())
 	}
@@ -26,7 +26,7 @@ func (e *Element) limbsUnsafe() []uint64 {
 
 // String represents a string representation of the element
 func (e *Element) String() string {
-	data, _ := e.limbs()
+	data := e.limbsUnsafe()
 	return fmt.Sprintf("{0x%016x, 0x%016x, 0x%016x, 0x%016x, 0x%016x, 0x%016x, 0x%016x, 0x%016x}",
 		data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7])
 }
@@ -37,10 +37,7 @@ func Square(c, a *Element) {
 	c.Limb.MakeMutable()
 	defer c.Limb.MakeImmutable()
 
-	climbs, _ := c.limbs()
-	alimbs, _ := a.limbs()
-
-	field64.Square(climbs, alimbs)
+	field64.Square(c.limbsUnsafe(), a.limbsUnsafe())
 }
 
 // CreateElementFrom takes NLimbs uint64 entries and creates
@@ -59,52 +56,6 @@ func CreateElementFrom(data []uint64) *Element {
 	copy(lmbs, data)
 
 	return elm
-}
-
-// EmptyElement returns a newly created empty element
-func EmptyElement() *Element {
-	return CreateFieldElement()
-}
-
-// SubtractNonResidue subtracts a from b, placing the result in c.
-// c can overlap with a and b.
-// This function will not reduce after the operation
-// Function: gf_sub_nr
-func SubtractNonResidue(c, a, b *Element) {
-	c.Limb.MakeMutable()
-	defer c.Limb.MakeImmutable()
-
-	subtractRaw(c, a, b)
-	bias(c, 2)
-}
-
-// AddNonResidue will add a and b and put the result in c.
-// c can overlap with a and b
-// This function will not reduce at the end.
-// Function: gf_add_nr
-func AddNonResidue(c, a, b *Element) {
-	c.Limb.MakeMutable()
-	defer c.Limb.MakeImmutable()
-
-	addRaw(c, a, b)
-}
-
-// Subtract will subtract a from b, putting the result in d.
-// It is safe for d to overlap with a and b.
-// This function reduces at the end
-// Function: gf_sub
-func Subtract(d, a, b *Element) {
-	d.Limb.MakeMutable()
-	defer d.Limb.MakeImmutable()
-
-	subtract(d, a, b)
-}
-
-// Function: gf_sub
-func subtract(d, a, b *Element) {
-	subtractRaw(d, a, b)
-	bias(d, 2)
-	weakReduce(d)
 }
 
 // Function: gf_sub_RAW
