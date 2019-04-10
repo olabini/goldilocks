@@ -2,7 +2,15 @@ package field64
 
 import (
 	"testing"
+
+	. "gopkg.in/check.v1"
 )
+
+func Test(t *testing.T) { TestingT(t) }
+
+type intrinsicsSuite struct{}
+
+var _ = Suite(&intrinsicsSuite{})
 
 type testVector struct {
 	a, b []uint64
@@ -60,24 +68,15 @@ var mulFieldTestVectors = []testVector{
 			0x7864723f2fd84, 0x918cfbfde10a1c}},
 }
 
-func Test_MulField(t *testing.T) {
+func (s *intrinsicsSuite) Test_MulField(c *C) {
 	out := make([]uint64, NLimbs)
-	for ix, v := range mulFieldTestVectors {
+	for _, v := range mulFieldTestVectors {
 		MulField(out, v.a, v.b)
-		if out[0] != v.exp[0] ||
-			out[1] != v.exp[1] ||
-			out[2] != v.exp[2] ||
-			out[3] != v.exp[3] ||
-			out[4] != v.exp[4] ||
-			out[5] != v.exp[5] ||
-			out[6] != v.exp[6] ||
-			out[7] != v.exp[7] {
-			t.Errorf("MulField(#%d) was incorrect, got %#v", ix, out)
-		}
+		c.Assert(out, DeepEquals, v.exp)
 	}
 }
 
-func Test_MulFieldUnsigned(t *testing.T) {
+func (s *intrinsicsSuite) Test_MulFieldUnsigned(c *C) {
 	out := make([]uint64, NLimbs)
 	a := []uint64{0x993a1dc07dc468, 0xb30cb17de4df36,
 		0xc383cc018dd112, 0x16a4de8f81ceab,
@@ -89,16 +88,7 @@ func Test_MulFieldUnsigned(t *testing.T) {
 		0xe499a5ff3bcd7a, 0x365dac4a39a540,
 		0x6079452bd4053d, 0x8e9eb94a85ccb4}
 	MulFieldUnsigned(out, a, b)
-	if out[0] != exp[0] ||
-		out[1] != exp[1] ||
-		out[2] != exp[2] ||
-		out[3] != exp[3] ||
-		out[4] != exp[4] ||
-		out[5] != exp[5] ||
-		out[6] != exp[6] ||
-		out[7] != exp[7] {
-		t.Errorf("MulFieldUnsigned(1) was incorrect, got %#v", out)
-	}
+	c.Assert(out, DeepEquals, exp)
 
 	a = []uint64{0xe908e8219da07c, 0x932e20bca1bb24,
 		0x5fc4c0d1a8cfc0, 0x822dd3800306c7,
@@ -110,16 +100,7 @@ func Test_MulFieldUnsigned(t *testing.T) {
 		0xa123ca7aacb706, 0xe0f4776e3d5001,
 		0x435e67bcfbd64a, 0x86b1947344d615}
 	MulFieldUnsigned(out, a, b)
-	if out[0] != exp[0] ||
-		out[1] != exp[1] ||
-		out[2] != exp[2] ||
-		out[3] != exp[3] ||
-		out[4] != exp[4] ||
-		out[5] != exp[5] ||
-		out[6] != exp[6] ||
-		out[7] != exp[7] {
-		t.Errorf("MulFieldUnsigned(2) was incorrect, got %#v", out)
-	}
+	c.Assert(out, DeepEquals, exp)
 }
 
 func limbEq(a, b []uint64) bool {
@@ -133,7 +114,7 @@ func limbEq(a, b []uint64) bool {
 		a[7] == b[7]
 }
 
-func Test_Square(t *testing.T) {
+func (s *intrinsicsSuite) Test_Square(c *C) {
 	out := make([]uint64, NLimbs)
 	out2 := make([]uint64, NLimbs)
 	out3 := make([]uint64, NLimbs)
@@ -147,112 +128,76 @@ func Test_Square(t *testing.T) {
 		0x37343e032e48db, 0x337481e66f0a6e,
 		0x890dc78d47073f, 0x4795ac2b49dbfa}
 	Square(out, a)
-	if !limbEq(out, exp) {
-		t.Errorf("Square(0) was incorrect, got %#v", out)
-	}
+	c.Assert(out, DeepEquals, exp)
 
 	MulField(out2, a, a)
-	if !limbEq(out, out2) {
-		t.Errorf("Mul(0) and Square(0) should be equal...")
-	}
+	c.Assert(out, DeepEquals, out2)
 
 	for i := 0; i < 30; i += 2 {
 		Square(out3, out)
 		MulField(out4, out2, out2)
 
-		if !limbEq(out3, out4) {
-			t.Errorf("Mul(%d) and Square(%d) should be equal...", i+1, i+1)
-		}
+		c.Assert(out3, DeepEquals, out4)
 
 		Square(out, out3)
 		MulField(out2, out4, out4)
 
-		if !limbEq(out, out2) {
-			t.Errorf("Mul(%d) and Square(%d) should be equal...", i+2, i+2)
-		}
+		c.Assert(out, DeepEquals, out2)
 	}
 }
 
-func Test_widesub(t *testing.T) {
+func (s *intrinsicsSuite) Test_widesub(c *C) {
 	one := uint128{0x00, 0x01}
 	zero := uint128{0x00, 0x00}
 	res := widesub(one, one)
-	if res != zero {
-		t.Errorf("widesub(0x01, 0x01) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, zero)
 
 	res = widesub(one, zero)
-	if res != one {
-		t.Errorf("widesub(0x01, 0x00) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, one)
 
 	highOne := uint128{0x01, 0x01}
 	res = widesub(highOne, one)
-	if res != (uint128{0x01, 0x00}) {
-		t.Errorf("widesub(0x010000000000000001, 0x01) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x01, 0x00})
 
 	another := uint128{0x01, 0x00}
 	res = widesub(another, one)
-	if res != (uint128{0x00, 0xFFFFFFFFFFFFFFFF}) {
-		t.Errorf("widesub(0x010000000000000000, 0x01) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x00, 0xFFFFFFFFFFFFFFFF})
 
 	large := uint128{0xFFFFFFFFFDD123, 0x00FF124323245324}
 	otherLarge := uint128{0xAAA, 0x0000000656456454}
 	res = widesub(large, otherLarge)
-	if res != (uint128{0xfffffffffdc679, 0x00ff123cccdeeed0}) {
-		t.Errorf("widesub(0xFFFFFFFFFDD12300FF124323245324, 0xAAA0000000656456454) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0xfffffffffdc679, 0x00ff123cccdeeed0})
 }
 
-func Test_wideshiftleft(t *testing.T) {
+func (s *intrinsicsSuite) Test_wideshiftleft(c *C) {
 	one := uint128{0x00, 0x01}
 	res := wideshiftleft(one, 0)
-	if res != one {
-		t.Errorf("wideshiftleft(0x01, 0) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, one)
 
 	res = wideshiftleft(one, 10)
-	if res != (uint128{0x00, 0x0400}) {
-		t.Errorf("wideshiftleft(0x01, 10) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x00, 0x0400})
 
 	res = wideshiftleft(one, 63)
-	if res != (uint128{0x00, 0x8000000000000000}) {
-		t.Errorf("wideshiftleft(0x01, 63) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x00, 0x8000000000000000})
 
 	res = wideshiftleft(one, 64)
-	if res != (uint128{0x01, 0x00}) {
-		t.Errorf("wideshiftleft(0x01, 64) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x01, 0x00})
 
 	res = wideshiftleft(uint128{0x01, 0x01}, 1)
-	if res != (uint128{0x02, 0x02}) {
-		t.Errorf("wideshiftleft(0x010000000000000001, 1) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x02, 0x02})
 }
 
-func Test_wideshiftright(t *testing.T) {
+func (s *intrinsicsSuite) Test_wideshiftright(c *C) {
 	one := uint128{0x00, 0x01}
 	res := wideshiftright(one, 0)
-	if res != one {
-		t.Errorf("wideshiftright(0x01, 0) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, one)
 
 	res = wideshiftright(one, 1)
-	if res != (uint128{0x00, 0x00}) {
-		t.Errorf("wideshiftright(0x00, 1) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x00, 0x00})
 
 	res = wideshiftright(uint128{0xFF00FF, 0x123}, 64)
-	if res != (uint128{0x00, 0xFF00FF}) {
-		t.Errorf("wideshiftright(0xFF00FF0000000000000123, 64) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x00, 0xFF00FF})
 
 	res = wideshiftright(uint128{0xFF00FF, 0x123}, 1)
-	if res != (uint128{0x7f807f, 0x8000000000000091}) {
-		t.Errorf("wideshiftright(0xFF00FF0000000000000123, 1) was incorrect, got %#v", res)
-	}
+	c.Assert(res, Equals, uint128{0x7f807f, 0x8000000000000091})
 }

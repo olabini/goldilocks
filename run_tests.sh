@@ -2,4 +2,4 @@
 
 DIR=`pwd`
 
-sudo -E -i $DIR/run_tests_in.sh $DIR
+sudo -E -i $DIR/run_tests_in.sh $DIR $GOPATH $GOROOT

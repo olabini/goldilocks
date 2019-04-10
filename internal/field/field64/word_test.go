@@ -1,34 +1,28 @@
 package field64
 
-import "testing"
+import . "gopkg.in/check.v1"
 
-func Test_LeftShiftExtend(t *testing.T) {
+type wordSuite struct{}
+
+var _ = Suite(&wordSuite{})
+
+func (s *wordSuite) Test_LeftShiftExtend(c *C) {
 	total := LeftShiftExtend(0x1)
-	if total != Word(0xFFFFFFFFFFFFFFFF) {
-		t.Errorf("1 mask was incorrect, got %x", total)
-	}
+	c.Assert(total, Equals, Word(0xFFFFFFFFFFFFFFFF))
 
 	total = LeftShiftExtend(0x0)
-	if total != Word(0x00) {
-		t.Errorf("0 mask was incorrect, got %x", total)
-	}
+	c.Assert(total, Equals, Word(0x00))
 }
 
-func Test_WordIsZero(t *testing.T) {
+func (s *wordSuite) Test_WordIsZero(c *C) {
 	res := WordIsZero(0x00)
-	if res != Word(0x01) {
-		t.Errorf("WordIsZero(0x00) was incorrect, got 0x%x", res)
-	}
+	c.Assert(res, Equals, Word(0x01))
 
 	res = WordIsZero(0xFFFFFFFFFFFFFFFF)
-	if res != Word(0x00) {
-		t.Errorf("WordIsZero(0xFFFFFFFFFFFFFFFF) was incorrect, got 0x%x", res)
-	}
+	c.Assert(res, Equals, Word(0x00))
 
 	res = WordIsZero(0x01)
-	if res != Word(0x00) {
-		t.Errorf("WordIsZero(0x01) was incorrect, got 0x%x", res)
-	}
+	c.Assert(res, Equals, Word(0x00))
 }
 
 // func Test_WideMul(t *testing.T) {
