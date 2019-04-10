@@ -7,7 +7,7 @@ go:
 script:
   - make deps
   - make lint vet
-  - sudo make test
+  - run_tests.sh
 
 matrix:
   allow_failures:
